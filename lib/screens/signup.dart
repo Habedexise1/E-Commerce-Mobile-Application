@@ -1,34 +1,165 @@
-import 'dart:ui';
-
 import 'package:e_commerce/screens/Login.dart';
+import 'package:e_commerce/widgets/mybutton.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../widgets/changescreen.dart';
+import '../widgets/mytextformField.dart';
+import '../widgets/passwordtextformField.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+  const SignUp({Key? key}) : super(key: key);
 
   @override
   State<SignUp> createState() => _SignUpState();
 }
 
 final GlobalKey<FormState> _fromkey = GlobalKey<FormState>();
+final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 String p =
     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
 RegExp regExp = new RegExp(p);
 bool obserText = true;
+String? email;
+String? password;
 
 class _SignUpState extends State<SignUp> {
-  void validation() {
+  void validation() async {
     final FormState? _form = _fromkey.currentState;
     if (_form!.validate()) {
-      print("Yes");
+      try {
+        UserCredential result = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email!, password: password!);
+        print(result.user!.uid);
+      } on PlatformException catch (e) {
+        print(e.message.toString());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message ?? ''),
+          ),
+        );
+      }
     } else {
       print("No");
     }
   }
+  Widget _buildAllTextFormField() {
+    return Container(
+      height: 320,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          MyTextFormField(
+            validator: (value) {
+              if (value != null && value.isEmpty) {
+                if (value == "") {
+                  return "Please Fill UserName";
+                } else if (value.length < 6) {
+                  return "UserName Is Too Short";
+                }
+                return "";
+              }
+              return null;
+            },
+            name: 'UserName',
+            onChanged: (value) {},
+          ),
+          MyTextFormField(
+            name: "Email",
+            onChanged: (value) {
+              setState(() {
+                email = value;
+                print(email);
+              });
+            },
+            validator: (value) {
+              if (value == "") {
+                return "Please Fill Email";
+              } else if (!regExp.hasMatch(value!)) {
+                return "Email Is Valid";
+              }
+              return null;
+            },
+          ),
+          PasswordTextFormField(
+            obserText: obserText,
+            name: "Password",
+            onChanged: (value) {
+              setState(() {
+                password = value;
+                print(password);
+              });
+            },
+            validator: (value) {
+              if (value == "") {
+                return "Please Input Password";
+              } else if (value!.length < 8) {
+                return "Password Is Too Short";
+              }
+              return null;
+            },
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              setState(() {
+                obserText = !obserText;
+              });
+            },
+          ),
+          MyTextFormField(
+            validator: (value) {
+              if (value != null && value.isEmpty) {
+                if (value == "") {
+                  return "Please fill Phone Number";
+                } else if (value.length < 11) {
+                  return "Phone Number Must Be 11";
+                }
+              }
+              return null;
+            },
+            name: 'Phone Number',
+            onChanged: (value) {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButtomPart() {
+    return Container(
+      height: 400,
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _buildAllTextFormField(),
+          MyButton(
+            name: "SignUp",
+            onPressed: () {
+              validation();
+            },
+          ),
+          ChangeScreen(
+            name: "Login",
+            whichAccount: "I Already Have An Account",
+            onTap: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (ctx) => Login(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext) {
+    key:
+    _scaffoldkey;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -56,128 +187,7 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: 20,
                 ),
-                Container(
-                  height: 400,
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      TextFormField(
-                        validator: (value) {
-                          if (value != null && value.isEmpty) {
-                            if (value == "") {
-                              return "Please Fill UserName";
-                            } else if (value.length < 6) {
-                              return "UserName Is Too Short";
-                            }
-                            return "";
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'UserName',
-                          hintStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      TextFormField(
-                        validator: (value) {
-                          if (value == "") {
-                            return "Please Fill Email";
-                          } else if (!regExp.hasMatch(value!)) {
-                            return "Email is Invalid";
-                          }
-                          return "";
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Email',
-                          hintStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      TextFormField(
-                        obscureText: obserText,
-                        validator: (value) {
-                          if (value != null && value.isEmpty) {
-                            if (value == "") {
-                              return "Please Fill Password";
-                            } else if (value.length < 8) {
-                              return "Password Is too Short";
-                            }
-                            return "";
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Password',
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                obserText = !obserText;
-                              });
-                              FocusScope.of(context).unfocus();
-                            },
-                            child: Icon(
-                              obserText == true
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.black,
-                            ),
-                          ),
-                          hintStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      TextFormField(
-                        validator: (value) {
-                          if (value != null && value.isEmpty) {
-                            if (value == "") {
-                              return "Please fill Phone Number";
-                            } else if (value.length < 11) {
-                              return "Phone Number Must Be 11";
-                            }
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Phone Number',
-                          hintStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      Container(
-                        height: 45,
-                        width: double.infinity,
-                        child: ElevatedButton(
-
-                            // color not added
-
-                            child: Text('Register'),
-                            onPressed: () {
-                              validation();
-                            }),
-                      ),
-                      Text("I Already Have An Account!"),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      GestureDetector(
-                        onTap: (() {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (ctx) => Login(),
-                            ),
-                          );
-                        }),
-                        child: Text(
-                          "Login",
-                          style: TextStyle(
-                              color: Colors.cyan,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                _buildButtomPart()
               ],
             ),
           ),

@@ -1,5 +1,5 @@
 import 'package:e_commerce/screens/Login.dart';
-import 'package:e_commerce/screens/signup.dart';
+import 'package:e_commerce/screens/homepage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,11 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Color(0xffaf7373),
-        scaffoldBackgroundColor: Colors.white,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Login(),
+      home: HomePage(),
     );
   }
 }
