@@ -25,21 +25,23 @@ final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 void validation() async {
   final FormState? _form = _formkey.currentState;
   if (_form!.validate()) {
-    try {
-      UserCredential result = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email!, password: password!);
-      print(result.user!.uid);
-    } on PlatformException catch (e) {
-      // _scaffoldkey.currentState!.showSnackBar(
-      //   SnackBar(
-      //     content: Text(e.message ?? ''),
-      //   ),
-      // );
-    }
-  } else {
-    print("No");
-  }
-}
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: "barry.allen@example.com",
+          password: "SuperSecretPassword!"
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          print('The password provided is too weak.');
+        } else if (e.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
+        }
+      } catch (e){
+        print(e);
+      }
+   }
+} // <-- add this closing brace
+
 
 void submitForm() {}
 
@@ -61,46 +63,48 @@ class _LoginState extends State<Login> {
             ),
           ),
           MyTextFormField(
-            name: "Email",
-             onChanged: (value) {
-              setState(() {
-                email = value;
-                print(email);
-              });
-            },
-            validator: (value) {
-              if (value == "") {
-                return "Please Fill Email";
-              } else if (!regExp.hasMatch(value!)) {
-                return "Email Is Valid";
-              }
-              return "";
-            },
-          ),
+  name: "Email",
+  onChanged: (value) {
+    setState(() {
+      email = value;
+      print(email);
+    });
+  }, // <-- add this closing parenthesis
+  validator: (value) {
+    if (value == "") {
+      return "Please Fill Email";
+    } else if (!regExp.hasMatch(value!)) {
+      return "Email Is Valid";
+    }
+    return "";
+  },
+),
+
           PasswordTextFormField(
-            obserText: obserText,
-            name: "Password",
-             onChanged: (value) {
-              setState(() {
-                password = value;
-                print(password);
-              });
-            },
-            validator: (value) {
-              if (value == "") {
-                return "Please Input Password";
-              } else if (value!.length < 8) {
-                return "Password Is Too Short";
-              }
-              return "";
-            },
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              setState(() {
-                obserText = !obserText;
-              });
-            },
-          ),
+  obserText: obserText,
+  name: "Password",
+  onChanged: (value) {
+    setState(() {
+      password = value;
+      print(password);
+    });
+  }, // <-- add this closing parenthesis
+  validator: (value) {
+    if (value == "") {
+      return "Please Input Password";
+    } else if (value!.length < 8) {
+      return "Password Is Too Short";
+    }
+    return "";
+  },
+  onTap: () {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      obserText = !obserText;
+    });
+  },
+),
+
           MyButton(
             onPressed: () {
               validation();

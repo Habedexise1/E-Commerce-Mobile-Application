@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   Widget _buildFeaturedProduct({String? name, double? price, String? image}) {
     return Card(
-      child: Container(
+      child: SizedBox(
         height: 250,
         width: 180,
         child: Column(
@@ -11,11 +11,8 @@ class HomePage extends StatelessWidget {
             Container(
               height: 190,
               width: 160,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("images/$image"),
-                ),
-              ),
+              decoration: BoxDecoration(),
+              child: Image.asset("assets/watch.png"),
             ),
             Text(
               "\$ $price",
@@ -34,20 +31,17 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryProduct({required String image, required int color}) {
+  Widget _buildCategoryProduct({String? image, required int color}) {
     return CircleAvatar(
       maxRadius: 40,
       backgroundColor: Color(color),
       child: Container(
         height: 40,
-        child: Image(
-          color: Colors.white,
-          image: AssetImage("images/$Image.png"),
-        ),
+        child: Image.asset("assets/watch.png"),
       ),
     );
   }
-  
+
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
   HomePage({super.key});
@@ -73,13 +67,13 @@ class HomePage extends StatelessWidget {
             icon: Icon(Icons.menu, color: Colors.black)),
         actions: [
           IconButton(
+              icon: Icon(Icons.search, color: Colors.black), onPressed: () {}),
+          IconButton(
               icon: Icon(
                 Icons.notifications_none,
                 color: Colors.black,
               ),
               onPressed: () {}),
-          IconButton(
-              icon: Icon(Icons.send, color: Colors.black), onPressed: () {}),
         ],
       ),
       body: Container(
@@ -96,12 +90,34 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.search),
-                            hintText: "Search Something",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30))),
+                      Container(
+                        height: 70,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          
+                        ),
+                      ),
+                      Container(
+                        height: 60,
+                        child: Row(
+                          children: [
+                            _buildCategoryProduct(
+                                // image: "dress.png",
+                                color: 0xff33dcfd),
+                            _buildCategoryProduct(
+                                // image: "pant.png",
+                                color: 0xfff38cdd),
+                            _buildCategoryProduct(
+                                // image: "shoe.png",
+                                color: 0xff4ff2af),
+                            _buildCategoryProduct(
+                                // image: "shirt.png",
+                                color: 0xff74acf7),
+                            _buildCategoryProduct(
+                                // image: "tie.png",
+                                color: 0xfffc6c8d),
+                          ],
+                        ),
                       ),
                       Container(
                         height: 50,
@@ -114,12 +130,14 @@ class HomePage extends StatelessWidget {
                                 Text(
                                   "Featured",
                                   style: TextStyle(
-                                      fontSize: 17, fontWeight: FontWeight.bold),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "See all",
                                   style: TextStyle(
-                                      fontSize: 17, fontWeight: FontWeight.bold),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold),
                                 )
                               ],
                             ),
@@ -129,19 +147,20 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Row(
+                Column(
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
+
                             _buildFeaturedProduct(
-                                image: "man.jpg",
+                                // image: "man.jpg",
                                 price: 30.0,
                                 name: "Men Long T-Shirt"),
                             _buildFeaturedProduct(
-                                image: "watch.jpg",
+                                // image: "watch.png",
                                 price: 30.0,
                                 name: "Women White Watch")
                           ],
@@ -149,39 +168,6 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                   ],
-                ),
-                Container(
-                  height: 70,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Categories",
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "See all",
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 60,
-                  child: Row(
-                    children: [
-                      _buildCategoryProduct(
-                          image: "userimage.png", color: 0xff33dcfd),
-                      _buildCategoryProduct(
-                          image: "shopping.png", color: 0xfff38cdd),
-                      _buildCategoryProduct(
-                          image: "userimage.png", color: 0xff4ff2af),
-                      _buildCategoryProduct(
-                          image: "userimage.png", color: 0xff74acf7),
-                      _buildCategoryProduct(
-                          image: "userimage.png", color: 0xfffc6c8d),
-                    ],
-                  ),
                 ),
                 Container(
                   height: 50,
@@ -214,11 +200,11 @@ class HomePage extends StatelessWidget {
                         Row(
                           children: [
                             _buildFeaturedProduct(
-                                image: "man.jpg",
+                                // image: "man.jpg",
                                 price: 30.0,
                                 name: "A Man Wrist Watch"),
                             _buildFeaturedProduct(
-                                image: "watch.jpg",
+                                // image: "watch.png",
                                 price: 30.0,
                                 name: "A Man Pant")
                           ],
